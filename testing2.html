@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Testing ground</title>
+    <style>
+    div {
+        position: relative;
+    }
+    
+    div > canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    </style>
+    <link href="css/metro.css" rel="stylesheet" />
+</head>
+
+<body>
+<div class="fluent-menu" data-role="fluentmenu">
+    <ul class="tabs-holder">
+        <li class="active"><a href="#content_id_1">TOOLS</a></li>
+        <li><a href="#content_id_n">Tab Name N</a></li>
+    </ul>
+    <div class="tabs-content">
+        <div class="tab-panel" id="content_id_1">
+            <div class="tab-panel-group">
+                <div class="tab-group-content">
+                    <div class="tab-content-segment">
+                        <button class="fluent-button">
+                            TWO-POINT
+                        </button>
+                        <button class="fluent-button">
+                            POLYLINE
+                        </button>
+                    </div>
+                </div>
+                <div class="tab-group-caption">LINE</div>
+            </div>
+            <div class="tab-panel-group">
+                <div class="tab-group-content">
+                    <div class="tab-content-segment">
+                        <button class="fluent-button">
+                        THREE-POINT
+                        </button>
+                        <button class="fluent-button">
+                        TWO-POINT
+                        </button>
+                        <button class="fluent-button">
+                        CENTER-RADIUS
+                        </button>
+                    </div>
+                </div>
+                <div class="tab-group-caption">CIRCLE</div>
+            </div>
+            <div class="tab-panel-group">
+                <div class="tab-group-content">
+                    <div class="tab-content-segment">
+                        <button class="fluent-button">
+                        BEZIER CURVE
+                        </button>
+                        <button class="fluent-button">
+                        INTERPOLATING CURVE
+                        </button>
+                    </div>
+                </div>
+                <div class="tab-group-caption">CURVES</div>
+            </div>
+        </div>
+        <div class="tab-panel" id="content_id_n">
+            <div class="tab-panel-group">
+                <div class="tab-group-content">set of menu elements</div>
+                <div class="tab-group-caption">group name</div>
+            </div>
+        </div>
+    </div>
+</div>
+    <svg id="svgMain" width="1000px" height="800px"></svg>
+    <script src="jquery-2.1.3.min.js"></script>
+    <script src="js/metro.js"></script>
+    <script src="math.js"></script>
+    <script>
+    console.log('0=rect, 1=circle, 2=line, 3=threePtCircle, 4=diaCircle, 5=polyLine');
+    canvas = document.getElementById('svgMain');
+    drawing = false;
+    mousePos = {
+        x: 0,
+        y: 0
+    };
+    activeObj = '';
+    objCount = 0;
+    osnapActive = false;
+    osnapMode = 'mid';
+    activeOSNAPObj = '';
+    SVGRoot = document.getElementById('svgMain');
+    tolerance = 10;
+    autoSnapOn = true;
+    autoSnapActive = false;
+    autoSnapModes = ['tan','mid','end'];
+    persistSnaps=['perp'];
+    snapped = false;
+    snapCache = {};
+    SVGRoot.style.cursor = 'none';
+    cursor = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    cursor.setAttribute("stroke", "black");
+    cursor.setAttribute("fill", "white");
+    cursor.setAttribute('cx', mousePos.x);
+    cursor.setAttribute('cy', mousePos.y);
+    cursor.setAttribute('r', 10);
+    cursor.setAttribute('id', 'cursor');
+    cursor.setAttribute('stroke-width', '1');
+    cursor.setAttribute('style', 'z-index:1000');
+    SVGRoot.appendChild(cursor);
+    toolPersist = 0;
+    tool = 1;
+    lastPos = mousePos;
+    activeObjEdit = '', activeObjEditId = '';
+    SVGRoot.addEventListener("mousedown", function(e) {
+        if (editing === false) {
+            drawing = true;
+            lastPos = {
+                x: cursor.getAttribute('cx'),
+                y: cursor.getAttribute('cy')
+            };
+            toolInit[tool]();
+        }
+    }, false);
+    canvas.addEventListener("keypress", function(e) {
+        if (e.keyCode === 13) {
+            ongoing = 0;
+            toolPersist = 0;
+            toolEnd[tool]();
+            $('#temp').remove();
+        }
+    }, false);
+    SVGRoot.addEventListener("mouseup", function(e) {
+        if (toolPersist == 0) {
+            drawing = false;
+            toolEnd[tool]();
+        }
+
+        // if(register){
+        //     registerCoords(activeRegister,getMousePos(canvas, e));
+        // }
+        // ctx2.clearRect(0, 0, canvas.width, canvas.height);
+    }, false);
+    SVGRoot.addEventListener("mousemove", function(e) {
+        mousePos = getMousePos(SVGRoot, e);
+        if (autoSnapActive == false || autoSnapOn == false) {
+            cursor.setAttribute('cx', mousePos.x);
+            cursor.setAttribute('cy', mousePos.y);
+        } else {
+            pos = showSnapPos(mousePos.x, mousePos.y);
+            cursor.setAttribute('cx', pos.x);
+            cursor.setAttribute('cy', pos.y);
+        }
+        if (drawing === true) {
+            toolActive[tool]();
+        }
+        if (editing) {
+            editActive[tool]();
+        }
+    }, false);
+    // registerCoords = function(register, position){
+    //     register.push(position.x,position.y);
+    // }
+    // Get the position of the mouse relative to the canvas
+    function getMousePos(canvasDom, mouseEvent) {
+        var rect = canvasDom.getBoundingClientRect();
+        return {
+            x: mouseEvent.clientX - rect.left,
+            y: mouseEvent.clientY - rect.top
+        };
+    }
+
+    // Get a regular interval for drawing to the screen
+    // window.requestAnimFrame = (function(callback) {
+    //     return window.requestAnimationFrame ||
+    //         window.webkitRequestAnimationFrame ||
+    //         window.mozRequestAnimationFrame ||
+    //         window.oRequestAnimationFrame ||
+    //         window.msRequestAnimaitonFrame ||
+    //         function(callback) {
+    //             window.setTimeout(callback, 1000 / 60);
+    //         };
+    // })();
+
+    editing = false;
+    showSnapPos = function(x, y) {
+        //x,y are current mouse coords
+        a = $('#' + activeOSNAPObj).prop('tagName');
+        if (tool == 2) {
+            //line snaps
+            if (drawing == false) {
+                if (a == 'line') {
+                    return lineLineInitSnap(activeOSNAPObj, x, y);
+                } else if (a == 'circle') {
+                    return lineCircleInitSnap(activeOSNAPObj, x, y);
+                }
+            } else {
+                xe = cursor.getAttribute('cx');
+                ye = cursor.getAttribute('cy');
+                if (a == 'line') {
+                    return lineLineEndSnap(activeOSNAPObj, x, y, xe, ye);
+                } else if (a == 'circle') {
+                    return lineCircleEndSnap(activeOSNAPObj, x, y);
+                }
+            }
+        } else {
+            return {x:x, y:y};
+        }
+    };
+    </script>
+    <script src="tools.js"></script>
+    <script src="toolInit.js"></script>
+    <script src="toolEnd.js"></script>
+    <script src="lineSnaps.js"></script>
+    <script src="editTools.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Testing ground</title>
+    <style>
+    div {
+    	position: relative;
+    }
+    div > canvas {
+    	position: absolute;
+    	top:0;
+    	left:0;
+    }
+    </style>
+</head>
+
+<body>
+    <div>
+        <canvas id="sig-canvas" width="1000" height="600">
+            Your browser doesn't support canvases.
+        </canvas>
+        <canvas id="sig-canvas-2" width="1000" height="600">
+            Your browser doesn't support canvases.
+        </canvas>
+    </div>
+    <script src="jquery-2.1.3.min.js"></script>
+    <script>
+    const pi = 3.14159;
+    dist = function(x1, y1, x2, y2) {
+        return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+    };
+    </script>
+    <script>
+    var toolref='0=rect, 1=circle, 2=line, 3=threePtCircle, 4=diaCircle, 5=polyLine';
+    var canvas = document.getElementById("sig-canvas");
+    var ctx = canvas.getContext("2d");
+    var canvas2 = document.getElementById("sig-canvas-2");
+    var ctx2 = canvas2.getContext("2d");
+    ctx.strokeStyle = "#222222";
+    ctx.lineWith = 1;
+    ctx2.font="normal normal 100";
+    // Set up mouse events for drawing
+    var drawing = false;
+    var mousePos = {
+        x: 0,
+        y: 0
+    };
+    var lastPos = mousePos;
+    canvas2.addEventListener("mousedown", function(e) {
+        drawing = true;
+        lastPos = getMousePos(canvas2, e);
+    }, false);
+    canvas2.addEventListener("mouseup", function(e) {
+        drawing = false;
+        ctx2.clearRect(0, 0, canvas.width, canvas.height);
+    }, false);
+    canvas2.addEventListener("mousemove", function(e) {
+        mousePos = getMousePos(canvas2, e);
+    }, false);
+
+    // Get the position of the mouse relative to the canvas
+    function getMousePos(canvasDom, mouseEvent) {
+        var rect = canvasDom.getBoundingClientRect();
+        return {
+            x: mouseEvent.clientX - rect.left,
+            y: mouseEvent.clientY - rect.top
+        };
+    }
+
+    // Get a regular interval for drawing to the screen
+    window.requestAnimFrame = (function(callback) {
+        return window.requestAnimationFrame ||
+            window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame ||
+            window.oRequestAnimationFrame ||
+            window.msRequestAnimaitonFrame ||
+            function(callback) {
+                window.setTimeout(callback, 1000 / 60);
+            };
+    })();
+    rect = function() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.moveTo(lastPos.x, lastPos.y);
+        ctx.beginPath();
+        ctx.rect(lastPos.x, lastPos.y, -lastPos.x + mousePos.x, -lastPos.y + mousePos.y);
+        ctx.closePath();
+        ctx.stroke();
+    }
+    line = function() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.beginPath();
+        ctx.moveTo(lastPos.x, lastPos.y);
+        ctx.lineTo(mousePos.x, mousePos.y);
+        ctx.closePath();
+        ctx.stroke();
+    }
+    circ = function() {
+        var r = dist(lastPos.x, lastPos.y, mousePos.x, mousePos.y);
+        var s = {};
+        s.x = Math.sign(mousePos.x - lastPos.x);
+        s.y = Math.sign(mousePos.y - lastPos.y);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx2.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.beginPath();
+        ctx.arc(lastPos.x, lastPos.y, r, 0, 2 * pi);
+        ctx.stroke();
+        // ctx.closePath();
+        ctx2.beginPath();
+        ctx2.moveTo(lastPos.x, lastPos.y);
+        ctx2.lineTo(mousePos.x + s.x * 10, mousePos.y + s.y * 10);
+        ctx2.lineTo(mousePos.x + s.x * 50, mousePos.y + s.y * 10);
+    	ctx2.stroke();
+        ctx2.strokeText('' + r, mousePos.x + s.x * 25, mousePos.y + s.y * 10);
+    }
+    arc1_ctr=0;
+    pts=[{x:0,y:0},{x:0,y:0},{x:0,y:0}];
+    arc1 = function() {
+        //three point arc
+        pts[arc1_ctr].x=lastPos.x;
+        pts[arc1_ctr].y=lastPos.y;
+        console.log(pts[arc1_ctr]);
+        arc1_ctr+=1;
+        if(arc1_ctr==3) {
+            drawing=true;
+            var D=4*(pts[0].x*(pts[1].y-pts[2].y)-pts[0].y*(pts[1].x-pts[2].x)+(pts[1].x*pts[2].y-pts[2].x*pts[1].y));
+            x1=(pts[0].x*pts[0].x+pts[0].y*pts[0].y)/D;
+            y1=(pts[1].x*pts[1].x+pts[1].y*pts[1].y)/D;
+            r=Math.sqrt(x1*x1+y1*y1-(pts[2].x*pts[2].x+pts[2].y*pts[2].y)/D);
+            console.log(x1,y1,r);
+            ctx.beginPath();
+            ctx.arc(x1, y1, r, 0, 2 * pi);
+            ctx.stroke();
+        }
+        drawing=false;
+    }
+    arc2 = function() {
+        //three point arc
+        drawing=false;
+        ctx.arc(lastPos.x, lastPos.y, 50, 0, 2 * pi);
+    }
+    var tools = [rect, line, circ, arc1, arc2];
+    activeTool = 3;
+    // Draw to the canvas
+    function renderCanvas() {
+        if (drawing) {
+            tools[activeTool]();
+        }
+    }
+
+    // Allow for animation
+    (function drawLoop() {
+        requestAnimFrame(drawLoop);
+        renderCanvas();
+    })();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Testing ground</title>
+    <link href="css/metro.min.css" rel="stylesheet" />
+    <link href="css/metro-icons.min.css" rel="stylesheet" />
+    <link href="css/metro-responsive.min.css" rel="stylesheet" />
+    <link href="css/metro-colors.min.css" rel="stylesheet" />
+    <style>
+    div {
+        position: relative;
+    }
+    
+    div > canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    
+    .fluent-menu .fluent-big-button .icon {
+        font-size: 30px;
+    }
+    
+    #rightClkMenu {
+        display: none;
+        z-index: 10000;
+    }
+    
+    .rightMenuLink {
+        cursor: pointer;
+    }
+    
+    #svgMain {
+        transform-origin: top left;
+    }
+    
+    #coord-input {
+        display: none;
+        position: absolute;
+    }
+    
+    #coordX,
+    #coordY {
+        display: inline;
+    }
+    
+    .fluent-menu .tabs-holder .fluent-home,
+    .fluent-menu .tabs-holder .fluent-home.active {
+        border: 1px solid #0072c6;
+        background-color: #0072c6;
+    }
+    
+    .fluent-menu .tabs-holder .fluent-home:hover,
+    .fluent-menu .tabs-holder .fluent-home.active:hover {
+        border: 1px solid #004b82;
+        background-color: #004b82;
+    }
+    
+    .fluent-menu .tabs-holder .fluent-home > a {
+        color: white;
+    }
+    
+    .fluent-menu .tabs-holder .fluent-home > a:hover {
+        color: white;
+    }
+    
+    .fluent-menu .tabs-holder .fluent-home.active > a {
+        color: white;
+    }
+    
+    .fluent-menu .d-menu a {
+        padding: 5px;
+    }
+    
+    .d-menu li a {
+        min-width:0px;
+    }
+    .d-menu .fluent-big-button{
+        padding-left:20px;
+        padding-right:20px;
+    }
+    .setup-ip{
+        width:50px;
+    }
+    .close-dialog {
+        position: absolute;
+        top:10px;
+        right:10px;
+    }
+    .close-dialog > .close {
+        background: none;
+        border: none;
+    }
+    </style>
+    <script src="jquery-2.1.3.min.js"></script>
+    <script src="js/metro.js"></script>
+</head>
+
+<body>
+    <div class="fluent-menu" data-role="fluentmenu">
+        <ul class="tabs-holder">
+            <li class="fluent-home active"><a href="#content_id_0">HOME</a></li>
+            <li><a href="#content_id_1">DRAWING</a></li>
+        </ul>
+        <div class="tabs-content">
+            <div class="tab-panel" id="content_id_0">
+                <div class="tab-panel-group">
+                    <div class="tab-group-content">
+                        <div class="tab-content-segment">
+                            <button class="fluent-big-button" id="new-file">
+                                <span class="icon mif-file-empty"></span>New
+                                <br/>project
+                            </button>
+                        </div>
+                        <div class="tab-content-segment">
+                            <button class="fluent-big-button" id="open-file">
+                                <span class="icon mif-folder-open"></span>Open
+                                <br/>project
+                            </button>
+                        </div>
+                        <div class="tab-content-segment">
+                            <button class="fluent-big-button" id="save-wcf">
+                                <span class="icon mif-floppy-disk"></span>Save
+                                <br/>project
+                            </button>
+                        </div>
+                        <div class="tab-content-segment">
+                            <div class="dropdown-button">
+                                <button class="fluent-big-button dropdown-toggle">
+                                    <span class="icon mif-file-picture"></span>Export
+                                    <br/>as Image
+                                </button>
+                                <ul class="split-content d-menu" data-role="dropdown">
+                                    <li><a href="#" id="save-png">PNG</a></li>
+                                    <li><a href="#" id="save-svg">SVG</a></li>
+                                    <li><a href="#" id="save-jpg">JPEG</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="tab-content-segment">
+                            <button class="fluent-big-button" id="export-pdf">
+                                <span class="icon mif-file-pdf"></span>Export
+                                <br/>PDF
+                            </button>
+                        </div>
+                    </div>
+                    <div class="tab-group-caption">FILE</div>
+                </div>
+                <div class="tab-panel-group">
+                    <div class="tab-group-content">
+                        <div class="tab-content-segment">
+                            <button class="fluent-big-button" id="page-setup">
+                                <span class="icon mif-cogs"></span>Page
+                                <br/>setup
+                            </button>
+                            <button class="fluent-big-button" id="set-units">
+                                <span class="icon mif-meter"></span>Set
+                                <br/>units
+                            </button>
+                        </div>
+                    </div>
+                    <div class="tab-group-caption">DRAWING SETUP</div>
+                </div>
+            </div>
+            <div class="tab-panel" id="content_id_1">
+                <div class="tab-panel-group">
+                    <div class="tab-group-content">
+                        <div class="tab-content-segment">
+                            <div class="dropdown-button">
+                                <button class="fluent-big-button dropdown-toggle">
+                                    <span class="icon"><img src="fonts/custom/circle.png" width="40px"/></span>CIRCLE
+                                    <br/>
+                                </button>
+                                <ul class="split-content d-menu" data-role="dropdown">
+                                    <li>
+                                        <button class="fluent-big-button" id="centradcirc">
+                                            <span class="icon"><img src="fonts/custom/circle-rad.png" width="40px"/></span>Center<br/>Radius
+                                            <br/>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="fluent-big-button" id="3ptcirc">
+                                            <span class="icon"><img src="fonts/custom/circle-three.png" width="40px"/></span>Three<br/>Point
+                                            <br/>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="fluent-big-button" id="2ptcirc">
+                                            <span class="icon"><img src="fonts/custom/circle-dia.png" width="40px"/></span>Two<br/>Point
+                                            <br/>
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="tab-content-segment">
+                            <div class="dropdown-button">
+                                <button class="fluent-big-button dropdown-toggle">
+                                    <span class="icon"><img src="fonts/custom/line-tools.png" width="40px"/></span>LINE
+                                    <br/>
+                                </button>
+                                <ul class="split-content d-menu" data-role="dropdown">
+                                    <li>
+                                        <button class="fluent-big-button" id="2ptline">
+                                            <span class="icon"><img src="fonts/custom/line.png" width="40px"/></span>Two<br/>Points
+                                            <br/>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="fluent-big-button" id="polar-line">
+                                            <span class="icon"><img src="fonts/custom/line-angle.png" width="40px"/></span>Polar<br/>Line
+                                            <br/>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="fluent-big-button" id="polyline">
+                                            <span class="icon"><img src="fonts/custom/polyline.png" width="40px"/></span>Polyline
+                                            <br/>
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="tab-content-segment">
+                            <div class="dropdown-button">
+                                <button class="fluent-big-button dropdown-toggle">
+                                    <span class="icon"><img src="fonts/custom/curve-tools.png" width="40px"/></span>CURVES
+                                    <br/>
+                                </button>
+                                <ul class="split-content d-menu" data-role="dropdown">
+                                    <li>
+                                        <button class="fluent-big-button" id="bezier">
+                                            <span class="icon"><img src="fonts/custom/bezier.png" width="40px"/></span>Bezier<br/>Curve
+                                            <br/>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="fluent-big-button" id="interpolate">
+                                            <span class="icon"><img src="fonts/custom/interpolate.png" width="40px"/></span>Through<br/>Curve
+                                            <br/>
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="tab-content-segment">
+                            <div class="dropdown-button">
+                                <button class="fluent-big-button dropdown-toggle">
+                                    <span class="icon"><img src="fonts/custom/polygon-tools.png" width="40px"/></span>POLYGONS
+                                    <br/>
+                                </button>
+                                <ul class="split-content d-menu" data-role="dropdown">
+                                    <li>
+                                        <button class="fluent-big-button" id="rectangle">
+                                            <span class="icon"><img src="fonts/custom/rect.png" width="40px"/></span>2 point<br/>Rectangle
+                                            <br/>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="fluent-big-button" id="rect-wh">
+                                            <span class="icon"><img src="fonts/custom/rect-wh.png" width="40px"/></span>1 point<br/>Rectangle
+                                            <br/>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="fluent-big-button" id="square">
+                                            <span class="icon"><img src="fonts/custom/square.png" width="40px"/></span>Square
+                                            <br/>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="fluent-big-button" id="polygon">
+                                            <span class="icon"><img src="fonts/custom/polygon.png" width="40px"/></span>Polygon
+                                            <br/>
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="tab-content-segment">
+                            <div class="dropdown-button">
+                                <button class="fluent-big-button dropdown-toggle">
+                                    <span class="icon"><img src="fonts/custom/arc.png" width="40px"/></span>ARCS
+                                    <br/>
+                                </button>
+                                <ul class="split-content d-menu" data-role="dropdown">
+                                    <li>
+                                        <button class="fluent-big-button" id="arc-3pt">
+                                            <span class="icon"><img src="fonts/custom/arc-3pt.png" width="40px"/></span>3 point<br/>Arc
+                                            <br/>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="fluent-big-button" id="arc-2pt-rad">
+                                            <span class="icon"><img src="fonts/custom/arc-start-end-radius.png" width="40px"/></span>2 point<br>Radius<br/>Arc
+                                            <br/>
+                                        </button>
+                                    </li>
+                                    <!-- <li>
+                                        <button class="fluent-big-button" id="square">
+                                            <span class="icon"><img src="fonts/custom/arc-start-end-angle.png" width="40px"/></span>2 point<br>Angle<br/>Arc
+                                            <br/>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="fluent-big-button" id="polygon">
+                                            <span class="icon"><img src="fonts/custom/arc-cen-start-length.png" width="40px"/></span>Chord<br/>Defined<br/>Arc
+                                            <br/>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="fluent-big-button" id="polygon">
+                                            <span class="icon"><img src="fonts/custom/arc-cen-start-angle.png" width="40px"/></span>Angle<br/>Defined<br/>Arc
+                                            <br/>
+                                        </button> -->
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-group-caption">SHAPES</div>
+                </div>
+                <div class="tab-panel-group">
+                    <div class="tab-group-content">
+                        
+                    </div>
+                    <div class="tab-group-caption">ANNOTATION</div>
+                </div>
+                <div class="tab-panel-group">
+                    <div class="tab-group-content">
+                        <div class="tab-content-segment">
+                            <button class="fluent-button" id="autosnap">
+                                AUTOSNAP
+                            </button>
+                            <button class="fluent-button" id="horiz">
+                                HORIZONTAL
+                            </button>
+                            <button class="fluent-button" id="vert">
+                                VERTICAL
+                            </button>
+                            <button class="fluent-button" id="hatch">
+                                HATCH
+                            </button>
+                        </div>
+                    </div>
+                    <div class="tab-group-caption">SNAPS</div>
+                </div>
+                <div class="tab-panel-group">
+                    <div class="tab-group-content">
+                        <div class="tab-content-segment">
+                            <button class="fluent-button" id="radius">
+                                RADIUS
+                            </button>
+                            <button class="fluent-button" id="diameter">
+                                DIAMETER
+                            </button>
+                            <button class="fluent-button" id="length">
+                                LENGTH
+                            </button>
+                            <button class="fluent-button" id="angle">
+                                ANGLE
+                            </button>
+                        </div>
+                    </div>
+                    <div class="tab-group-caption">DIMENSIONING</div>
+                </div>
+                <div class="tab-panel-group">
+                    <div class="tab-group-content">
+                        <div class="tab-content-segment">
+                            <button class="fluent-button" id="trim">
+                                TRIM
+                            </button>
+                            <button class="fluent-button" id="centerline">
+                                CENTER LINE
+                            </button>
+                            <button class="fluent-button" id="centermark">
+                                CENTER MARK
+                            </button>
+                        </div>
+                    </div>
+                    <div class="tab-group-caption">ADVANCED</div>
+                </div>
+            </div>
+            <div class="tab-panel" id="content_id_n">
+                <div class="tab-panel-group">
+                    <div class="tab-group-content">set of menu elements</div>
+                    <div class="tab-group-caption">group name</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="SVGContainer" style="overflow: scroll; background-color: #eee;">
+        <svg id="svgMain" width="3508px" height="2480px">
+            <rect x="0" y="0" width="3508px" height="2480px" fill="white" id="bg"></rect>
+            <rect x="118" y="118" width="3272px" height="2244px" id="margin" fill="white" stroke-width="5" stroke="black"></rect>
+            <defs>
+                <pattern id="diag1" patternUnits="userSpaceOnUse" width="4" height="4">
+                    <path d="M-1,1 l2,-2
+           M0,4 l4,-4
+           M3,5 l2,-2" style="stroke:black; stroke-width:1" />
+                </pattern>
+                <pattern id="diag2" patternUnits="userSpaceOnUse" width="8" height="8">
+                    <path d="M-1,1 l2,-2
+           M0,8 l8,-8
+           M7,9 l2,-2" style="stroke:black; stroke-width:1" />
+                </pattern>
+                <pattern id="diag3" patternUnits="userSpaceOnUse" width="16" height="16">
+                    <path d="M-1,1 l2,-2
+           M0,16 l16,-16
+           M15,17 l2,-2" style="stroke:black; stroke-width:1" />
+                </pattern>
+                <pattern id="diag4" patternUnits="userSpaceOnUse" width="4" height="4">
+                    <path d="M5,1 l-2,-2
+           M4,4 l-4,-4
+           M1,5 l-2,-2" style="stroke:black; stroke-width:1" />
+                </pattern>
+                <pattern id="diag5" patternUnits="userSpaceOnUse" width="8" height="8">
+                    <path d="M9,1 l-2,-2
+           M8,8 l-8,-8
+           M1,9 l-2,-2" style="stroke:black; stroke-width:1" />
+                </pattern>
+                <pattern id="diag6" patternUnits="userSpaceOnUse" width="16" height="16">
+                    <path d="M17,1 l-2,-2
+           M16,16 l-16,-16
+           M1,17 l-2,-2" style="stroke:black; stroke-width:1" />
+                </pattern>
+                <marker id='head' viewBox="0 0 15 15" orient='auto-start-reverse' markerWidth='15' markerHeight='15' refX='15' refY='2.5'>
+                    <polygon points='0,0 15,2.5 0,5' fill="none" stroke="black" />
+                </marker>
+            </defs>
+        </svg>
+    </div>
+    <div id="rightClkMenu">
+        <ul class="v-menu context block-shadow-impact" id="mainRightMenu">
+        </ul>
+    </div>
+    <div id="coord-input">
+        x:
+        <div id="coordX"> </div>, y:
+        <div id="coordY"></div>
+    </div>
+    <div id="input-box" style="z-index:10000; position: fixed; bottom: 0; left:0;">
+        <label id="input-label">
+            <input type="file" id="file-input" />
+        </label>
+        <br/>
+        <input type="text" id="input-text">
+    </div>
+
+
+<div data-role="dialog" id="save-dialog" style="padding:30px;">
+    <div class="close-dialog"><button class="close" onclick=" window.hideMetroDialog('#save-dialog');">x</button></div>
+    <h3>Save as...</h3><hr/>
+    <div id="save-input"></div>
+</div>
+
+<div data-role="dialog" id="setup-dialog" style="padding:30px;">
+    <div class="close-dialog"><button class="close" onclick=" window.hideMetroDialog('#setup-dialog');">x</button></div>
+    <h3>Page setup</h3><hr/>
+    <h4>Size</h4>
+    <button class="button" id="A4">A4</button>
+    <button class="button" id="A3">A3</button>
+    <button class="button" id="A2">A2</button>
+    <h4>Settings</h4>
+    <label>Resolution</label><input type="number" id="page-res" value="300" class="setup-ip"/>ppi<br/><br/>
+    <label>Margin</label><input type="number" id="page-margin" value="1"  class="setup-ip"/><select id="margin-unit"><option value="cm" selected >cm</option><option value="inch">inch</option>
+</div>
+    <script src="math.js"></script>
+    <script src="index.js"></script>
+    <script src="desktop-build/js/desktop-ui.js"></script>
+    <script src="desktop-build/js/rightClick.js"></script>
+    <script src="tools.js"></script>
+    <script src="toolInit.js"></script>
+    <script src="toolEnd.js"></script>
+    <script src="dimInit.js"></script>
+    <script src="dim.js"></script>
+    <script src="dimEnd.js"></script>
+    <script src="lineSnaps.js"></script>
+    <script src="svgSnaps.js"></script>
+    <script src="editTools.js"></script>
+    <script src="intersect.js"></script>
+    <script src="createShapes.js"></script>
+    <script src="hatching.js"></script>
+    <script src="center-lines.js"></script>
+    <script src="select.js"></script>
+    <script src="trim.js"></script>
+    <script src="path-intersections.js"></script>
+    <script src="path-point.js"></script>
+    <script src="undo-redo.js"></script>
+    <script src="save.js"></script>
+    <script src="scale.js"></script>
+    <script src="move.js"></script>
+</body>
+
+</html>

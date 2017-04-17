@@ -337,12 +337,15 @@ $(function() {
     });
 
     $('#save-png').click(function() {
-        $('#save-input').html('<input type="text" id="save-name" /><br/><button id="save-it" class="button">Save</button>')
+        $('#save-input').html('<label>Name of file:</label><input type="text" id="save-name" /><br/><label>Author:</label><input type="text" id="save-author" /><br/><label>Name of Drawing:</label><input type="text" id="save-drawing" /><br/><button id="save-it" class="button">Save</button>')
         window.showMetroDialog('#save-dialog');
         $('#save-it').click(function() {
             var name = $('#save-name').val();
+            var author = $('#save-author').val();
+            var dname = $('#save-drawing').val();
+            var date = new Date();
             if (name != '') {
-                saveAsPNG(name);
+                saveAsPNG(name,author,dname,date);
                 window.hideMetroDialog('#save-dialog');
             }
         });

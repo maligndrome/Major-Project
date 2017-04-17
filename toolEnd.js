@@ -31,7 +31,7 @@ rectEnd = function() {
     document.getElementById('aura' + activeObj).addEventListener('mousedown', function(e) {
         if (trimming == true) {
             console.log('Hmmmm');
-            trim(e);
+            trimMaster(e);
             return;
         }
     });

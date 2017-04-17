@@ -429,6 +429,7 @@ intersection = function(shape1, shape2) {
         }
         return [];
     }
+    console.log(shape1,shape2);
     if ((shape1.type == 0 && shape2.type == 1) || (shape1.type == 1 && shape2.type == 0)) {
         //alt logic for the conditional: shap1.type + shape2.type ==1 ? ;-)
         //circle and rectangle

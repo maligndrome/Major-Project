@@ -59,10 +59,10 @@ Cursor = function() {
             this.hHair.setAttribute('x2', b + this.d);
             this.vHair.setAttribute('x1', b);
             this.vHair.setAttribute('x2', b);
-            this.x = b;
+            this.x = b / 1;
         } else if (a == 'cy') {
             this.midRect.setAttribute('y', b - this.c);
-            this.y = b;
+            this.y = b / 1;
             this.vHair.setAttribute('y1', b - this.d);
             this.vHair.setAttribute('y2', b + this.d);
             this.hHair.setAttribute('y1', b);
@@ -148,8 +148,8 @@ selecting = false;
 selected = [];
 moveObj = '';
 moving = false;
-moveStartPos={x:0,y:0};
-moveCache=[];
+moveStartPos = { x: 0, y: 0 };
+moveCache = [];
 trimming = false;
 centerline = false;
 centermark = false;
@@ -162,16 +162,70 @@ setTool = function(x) {
     return;
 }
 endTool = function() {
-    trimming=false;
+    trimming = false;
     editing = true;
     selectOn = true;
     return;
 }
 lastPos = mousePos;
 activeObjEdit = '', activeObjEditId = '';
+chamfer = false;
+chamferObj = '';
 SVGRoot.addEventListener("mousedown", function(e) {
     if (e.button == 0) {
         $('#rightClkMenu').hide();
+        if (chamfer) {
+            chamferObj = pickObj(e);
+            console.log('current',chamferObj);
+            var chamferPos = {
+                        x: cursor.getAttribute('cx') / 1,
+                        y: cursor.getAttribute('cy') / 1
+                    };
+            if ($('#' + chamferObj).prop('tagName') == 'rect') {
+                $('#input-label').html('Enter chamfer length: x');
+                $('#input-text').off('change');
+                $('#input-text').on('change', function() {
+                    var value = $('#input-text').val().split(' ');
+                    var a='';
+                    if (value[0]=='S'){
+                        a=rectChamferStraight(chamferPos,chamferObj,value[1]/1);
+                    } else if (value[0] == 'R'){
+                        a=rectChamferRound(chamferPos,chamferObj,value[1]/1);
+                    } else {
+                        $('#input-text').val('');
+                        $('#input-text').attr('placeholder', 'INVALID INPUT');
+                        $('#input-text').focus();
+                        return;
+                    }
+                    $('#input-text').val(a);
+                    $('#input-text').attr('placeholder', '');
+                    $('#input-text').focus();
+                    return;
+                });
+            }
+            if ($('#' + chamferObj).prop('tagName') == 'polygon') {
+                $('#input-label').html('Enter chamfer length: x');
+                $('#input-text').off('change');
+                $('#input-text').on('change', function() {
+                    var value = $('#input-text').val().split(' ');
+                    var a='';
+                    if (value[0]=='S'){
+                        a=polygonChamferStraight(chamferPos,chamferObj,value[1]/1);
+                    } else if (value[0] == 'R'){
+                        a=polygonChamferRound(chamferPos,chamferObj,value[1]/1);
+                    } else {
+                        $('#input-text').val('');
+                        $('#input-text').attr('placeholder', 'INVALID INPUT');
+                        $('#input-text').focus();
+                        return;
+                    }
+                    $('#input-text').val(a);
+                    $('#input-text').attr('placeholder', '');
+                    $('#input-text').focus();
+                    return;
+                });
+            }
+        }
         if (zooming) {
             if (zoomMode == 'in') {
                 actions.push({
@@ -246,7 +300,12 @@ SVGRoot.addEventListener("mousedown", function(e) {
                     editing = false;
                 }
             } else if (hatchOn == true) {
-                fillHatch(e.target.id, 'diag2');
+                var hatchPos = {
+                    x: Math.round(cursor.getAttribute('cx')),
+                    y: Math.round(cursor.getAttribute('cy'))
+                };
+                $('#svgMain').css('cursor', 'wait');
+                setTimeout(function() { hatchArbitrary(hatchPos, p1) }, 0);
             } else if (selectOn == true && e.shiftKey == false) {
                 select1.x = cursor.getAttribute('cx') / 1;
                 select1.y = cursor.getAttribute('cy') / 1;
@@ -265,7 +324,7 @@ SVGRoot.addEventListener("mousedown", function(e) {
     }
 }, false);
 document.body.addEventListener("keyup", function(e) {
-    if(selectOn == true && selected.length>0 && e.which == 46){
+    if (selectOn == true && selected.length > 0 && e.which == 46) {
         removeObjs();
         return;
     }
@@ -323,6 +382,9 @@ document.body.addEventListener("keyup", function(e) {
     return;
 }, false);
 SVGRoot.addEventListener("mouseup", function(e) {
+    if (chamfer) {
+        return;
+    }
     if (zooming) {
         if (zoomMode == 'select') {
             select2.x = cursor.getAttribute('cx') / 1;
@@ -339,7 +401,7 @@ SVGRoot.addEventListener("mouseup", function(e) {
             };
         }
     } else {
-        if(selectOn == true && e.shiftKey == true && moving == true){
+        if (selectOn == true && e.shiftKey == true && moving == true) {
             $('#svgMain').css('cursor', 'default');
             moving = false;
             moveObj = '';
@@ -376,8 +438,8 @@ SVGRoot.addEventListener("mousemove", function(e) {
         cursor.setAttribute('cx', pos.x);
         cursor.setAttribute('cy', pos.y);
         $('#coord-input').show();
-        $('#coordX').html(cursor.x);
-        $('#coordY').html(cursor.y);
+        $('#coordX').html((cursor.x * 25.4 / currRes).toFixed(leastCount));
+        $('#coordY').html((cursor.y * 25.4 / currRes).toFixed(leastCount));
         $('#coord-input').css({
             top: e.clientY - 5 - 20,
             left: e.clientX + 5

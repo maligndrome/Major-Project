@@ -80,3 +80,12 @@ createPolygon = function(pointsString, id = '', strokeWidth = 1, stroke = 'black
     pline.setAttribute('stroke-width', strokeWidth);
     return pline;
 }
+createText = function(print, x, y, id='', fontSize) {
+    var text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    text.setAttribute("id",  id);
+    text.setAttribute("x", x);
+    text.setAttribute("y", y);
+    text.setAttribute("font-size", fontSize);
+    text.innerHTML =print;
+    return text;
+}

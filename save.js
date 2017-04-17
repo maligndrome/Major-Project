@@ -8,7 +8,7 @@ saveAsSVG = function(name) {
     //now remove ids of all the elements.
     $('#clone').find('rect, line, polyline, circle, path, ellipse, polygon').removeAttr('id').removeAttr('style');
     //remove the cursor
-    $('.cursor').remove();
+    $('#clone .cursor').remove();
     $('#clone polyline').removeAttr('first');
     //now do the magic!
     $('#clone').wrap('<div id="cloneToSave"></div>');
@@ -21,7 +21,7 @@ saveAsSVG = function(name) {
     return;
 };
 
-saveAsPNG = function(name) {
+saveAsPNG = function(name, author, dname, date) {
     $('#SVGContainer').append($('#svgMain').clone().attr('id', 'clone'));
     $('#clone').hide();
     //now clear the auras first.
@@ -29,10 +29,14 @@ saveAsPNG = function(name) {
     //now remove ids of all the elements.
     $('#clone').find('rect, line, polyline, circle, path, ellipse, polygon').removeAttr('id').removeAttr('style');
     //remove the cursor
-    $('.cursor').remove();
+    $('#clone .cursor').remove();
     $('#clone polyline').removeAttr('first');
     //now do the magic!
     $('#clone').removeAttr('style');
+    document.getElementById('clone').appendChild(createRect(2500,2000,890,362,'table',strokeWidth));
+    document.getElementById('clone').appendChild(createText('Name:'+ dname, 2550,2100, '',50));
+    document.getElementById('clone').appendChild(createText('Author:'+ author, 2550,2200, '',50));
+    document.getElementById('clone').appendChild(createText('Date:'+ date.getDate()+'/'+date.getMonth()+'/'+date.getFullYear(), 2550,2300, '',50));
     $('body').append('<canvas id="canvas"></canvas>');
     var canvas = document.getElementById('canvas');
     canvas.width=SVGRoot.width.baseVal.value;
@@ -43,6 +47,7 @@ saveAsPNG = function(name) {
         document.getElementById('dload').click();
         $('#dload').remove();
         $('#canvas').remove();
+        $('#clone').remove();
     });
 };
 

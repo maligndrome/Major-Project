@@ -58,6 +58,21 @@ dimEllipse = function() {
 }
 
 dimPolygon = function() {
+    if(dimCache[2]=='zero'){
+        $('#'+dimObj).attr('y1', mousePos.y).attr('y2', mousePos.y);
+        $('#pro1-'+dimObj).attr('y2', mousePos.y);
+        $('#pro2-'+dimObj).attr('y2', mousePos.y);
+        $('#text-'+dimObj).attr('x', mousePos.x).attr('y', mousePos.y);
+        return;
+    }
+    if(dimCache[2]=='Infy'){
+        $('#'+dimObj).attr('x1', mousePos.x).attr('x2', mousePos.x);
+        $('#pro1-'+dimObj).attr('x2', mousePos.x);
+        $('#pro2-'+dimObj).attr('x2', mousePos.x);
+        $('#text-'+dimObj).attr('x', mousePos.x).attr('y', mousePos.y);
+        $('#text-' + dimObj).attr("transform", "rotate("+(-90)+" "+(mousePos.x-10)+" "+(mousePos.y-10)+")");
+        return;
+    }
     var p = dimCache[0];
     var q = dimCache[1];
     var a = dimCache[2];

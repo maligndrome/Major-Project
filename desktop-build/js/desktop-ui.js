@@ -26,7 +26,7 @@ $(function() {
                     $('#input-text').focus();
                     return;
                 }
-                lastPos = { x: ((temp[0] / 1)*currRes/25.4).toFixed(leastCount), y: ((temp[1] / 1)*currRes/25.4).toFixed(leastCount) };
+                lastPos = { x: ((temp[0] / 1) * currRes / 25.4).toFixed(leastCount), y: ((temp[1] / 1) * currRes / 25.4).toFixed(leastCount) };
                 cursor.position(lastPos);
                 $('#coordX').html(cursor.x);
                 $('#coordY').html(cursor.y);
@@ -44,7 +44,7 @@ $(function() {
                 }
                 objCount += 1;
                 activeObj = objCount;
-                var circle = createCircle(((temp[0] / 1)*currRes/25.4).toFixed(leastCount), ((temp[1] / 1)*currRes/25.4).toFixed(leastCount), value[1] / 1, objCount);
+                var circle = createCircle(((temp[0] / 1) * currRes / 25.4).toFixed(leastCount), ((temp[1] / 1) * currRes / 25.4).toFixed(leastCount), value[1] / 1, objCount);
                 SVGRoot.appendChild(circle);
                 $('#input-text').val('');
                 $('#input-text').attr('placeholder', '');
@@ -69,7 +69,7 @@ $(function() {
             for (var i = 0; i < value.length; i++) {
                 let temp = value[i].split(',');
                 if (!isNaN(temp[0]) && !isNaN(temp[1])) {
-                    sendPts.push({ x: ((temp[0] / 1)*currRes/25.4).toFixed(leastCount), y: ((temp[1] / 1)*currRes/25.4).toFixed(leastCount) });
+                    sendPts.push({ x: ((temp[0] / 1) * currRes / 25.4).toFixed(leastCount), y: ((temp[1] / 1) * currRes / 25.4).toFixed(leastCount) });
                 } else {
                     $('#input-text').val('');
                     $('#input-text').attr('placeholder', 'Invaid Input');
@@ -102,7 +102,7 @@ $(function() {
             for (var i = 0; i < value.length; i++) {
                 let temp = value[i].split(',');
                 if (!isNaN(temp[0]) && !isNaN(temp[1])) {
-                    sendPts.push({ x: ((temp[0] / 1)*currRes/25.4).toFixed(leastCount), y: ((temp[1] / 1)*currRes/25.4).toFixed(leastCount) });
+                    sendPts.push({ x: ((temp[0] / 1) * currRes / 25.4).toFixed(leastCount), y: ((temp[1] / 1) * currRes / 25.4).toFixed(leastCount) });
                 } else {
                     $('#input-text').val('');
                     $('#input-text').attr('placeholder', 'Invaid Input');
@@ -117,7 +117,7 @@ $(function() {
             return;
         });
     });
-    $('#bezier').click(function(){
+    $('#bezier').click(function() {
         setTool(12);
         $('#input-label').html('Arc with start, end and radius<br/>Enter x,y( x2,y2 r) and press [ENTER].');
         $('#input-text').off('change');
@@ -127,7 +127,7 @@ $(function() {
             for (var i = 0; i < value.length; i++) {
                 let temp = value[i].split(',');
                 if (!isNaN(temp[0]) && !isNaN(temp[1])) {
-                    sendPts.push(((temp[0] / 1)*currRes/25.4).toFixed(leastCount), ((temp[1] / 1)*currRes/25.4).toFixed(leastCount) );
+                    sendPts.push(((temp[0] / 1) * currRes / 25.4).toFixed(leastCount), ((temp[1] / 1) * currRes / 25.4).toFixed(leastCount));
                 } else {
                     $('#input-text').val('');
                     $('#input-text').attr('placeholder', 'Invaid Input');
@@ -142,7 +142,7 @@ $(function() {
             return;
         });
     });
-    $('#interpolate').click(function(){
+    $('#interpolate').click(function() {
         setTool(13);
     });
     $('#arc-2pt-rad').click(function() {
@@ -161,7 +161,7 @@ $(function() {
             for (var i = 0; i < value.length; i++) {
                 let temp = value[i].split(',');
                 if (!isNaN(temp[0]) && !isNaN(temp[1])) {
-                    sendPts.push({ x: ((temp[0] / 1)*currRes/25.4).toFixed(leastCount), y: ((temp[1] / 1)*currRes/25.4).toFixed(leastCount) });
+                    sendPts.push({ x: ((temp[0] / 1) * currRes / 25.4).toFixed(leastCount), y: ((temp[1] / 1) * currRes / 25.4).toFixed(leastCount) });
                 } else {
                     $('#input-text').val('');
                     $('#input-text').attr('placeholder', 'Invaid Input');
@@ -192,7 +192,7 @@ $(function() {
             for (var i = 0; i < value.length; i++) {
                 let temp = value[i].split(',');
                 if (!isNaN(temp[0]) && !isNaN(temp[1])) {
-                    sendPts.push({ x: ((temp[0] / 1)*currRes/25.4).toFixed(leastCount), y: ((temp[1] / 1)*currRes/25.4).toFixed(leastCount) });
+                    sendPts.push({ x: ((temp[0] / 1) * currRes / 25.4).toFixed(leastCount), y: ((temp[1] / 1) * currRes / 25.4).toFixed(leastCount) });
                 } else {
                     $('#input-text').val('');
                     $('#input-text').attr('placeholder', 'Invaid Input');
@@ -220,7 +220,7 @@ $(function() {
             for (var i = 0; i < value.length; i++) {
                 let temp = value[i].split(',');
                 if (!isNaN(temp[0]) && !isNaN(temp[1])) {
-                    sendPts.push({ x: ((temp[0] / 1)*currRes/25.4).toFixed(leastCount), y: ((temp[1] / 1)*currRes/25.4).toFixed(leastCount) });
+                    sendPts.push({ x: ((temp[0] / 1) * currRes / 25.4).toFixed(leastCount), y: ((temp[1] / 1) * currRes / 25.4).toFixed(leastCount) });
                 } else {
                     $('#input-text').val('');
                     $('#input-text').attr('placeholder', 'Invaid Input');
@@ -262,20 +262,45 @@ $(function() {
         dimActive = 2;
         return;
     });
-    $('#trim').click(function(){
-        editing=true;
-        trimming=true;
-        selectOn=false;
+    $('#trim').click(function() {
+        editing = true;
+        trimming = true;
+        selectOn = false;
+        selecting = false;
+        select1.x=0;
+        select1.y=0;
+        select2.x=0;
+        select2.y=0;
     });
-    $('#centerline').click(function(){
-        editing=true;
-        centerline=true;
-        selectOn=false;
+    $('#chamfer').click(function() {
+        editing = true;
+        chamfer = true;
+        selectOn = false;
+        selecting = false;
+        select1.x=0;
+        select1.y=0;
+        select2.x=0;
+        select2.y=0;
     });
-    $('#centermark').click(function(){
-        editing=true;
-        centermark=true;
-        selectOn=false;
+    $('#centerline').click(function() {
+        editing = true;
+        centerline = true;
+        selectOn = false;
+        selecting = false;
+        select1.x=0;
+        select1.y=0;
+        select2.x=0;
+        select2.y=0;
+    });
+    $('#centermark').click(function() {
+        editing = true;
+        centermark = true;
+        selectOn = false;
+        selecting = false;
+        select1.x=0;
+        select1.y=0;
+        select2.x=0;
+        select2.y=0;
     });
     $('#angle').click(function() {
         dimensioning = true;
@@ -345,7 +370,7 @@ $(function() {
             var dname = $('#save-drawing').val();
             var date = new Date();
             if (name != '') {
-                saveAsPNG(name,author,dname,date);
+                saveAsPNG(name, author, dname, date);
                 window.hideMetroDialog('#save-dialog');
             }
         });
@@ -354,94 +379,95 @@ $(function() {
         window.showMetroDialog('#setup-dialog');
     });
     $('#A4').click(function() {
-        var a=resizeTo(3508 * currRes / 300, 2480 * currRes / 300);
-        currWidth=a[0];
-        currHeight=a[1];
+        var a = resizeTo(3508 * currRes / 300, 2480 * currRes / 300);
+        currWidth = a[0];
+        currHeight = a[1];
         return;
     });
     $('#A3').click(function() {
-        var a=resizeTo(4960 * currRes / 300, 3508 * currRes / 300);
-        currWidth=a[0];
-        currHeight=a[1];
+        var a = resizeTo(4960 * currRes / 300, 3508 * currRes / 300);
+        currWidth = a[0];
+        currHeight = a[1];
         return;
     });
     $('#A2').click(function() {
-        var a=resizeTo(7016 * currRes / 300, 4960 * currRes / 300);
-        currWidth=a[0];
-        currHeight=a[1];
+        var a = resizeTo(7016 * currRes / 300, 4960 * currRes / 300);
+        currWidth = a[0];
+        currHeight = a[1];
         return;
     });
-    $('#page-res').change(function(){
-        var prevRes=currRes;
-        currRes=$(this).val();
-        var a=resizeTo(currWidth*currRes/prevRes,currHeight*currRes/prevRes);
-        currWidth=a[0];
-        currHeight=a[1];
-        currMargin=currMargin*currRes/prevRes;
+    $('#page-res').change(function() {
+        var prevRes = currRes;
+        currRes = $(this).val();
+        var a = resizeTo(currWidth * currRes / prevRes, currHeight * currRes / prevRes);
+        currWidth = a[0];
+        currHeight = a[1];
+        currMargin = currMargin * currRes / prevRes;
         $('#margin').attr('x', currMargin);
         $('#margin').attr('y', currMargin);
-        $('#margin').attr('width', currWidth-2*currMargin);
-        $('#margin').attr('height', currHeight-2*currMargin);
-        strokeWidth=sw(currRes);
+        $('#margin').attr('width', currWidth - 2 * currMargin);
+        $('#margin').attr('height', currHeight - 2 * currMargin);
+        strokeWidth = sw(currRes);
         resetStroke();
         return;
     });
-    $('#page-margin').change(function(){
-        if($('#margin-unit').val()=='inch')
-            currMargin=$(this).val()*currRes;
-        else 
-            currMargin=Math.round($(this).val()*currRes/2.54);
+    $('#page-margin').change(function() {
+        if ($('#margin-unit').val() == 'inch')
+            currMargin = $(this).val() * currRes;
+        else
+            currMargin = Math.round($(this).val() * currRes / 2.54);
         $('#margin').attr('x', currMargin);
         $('#margin').attr('y', currMargin);
-        $('#margin').attr('width', currWidth-2*currMargin);
-        $('#margin').attr('height', currHeight-2*currMargin);
+        $('#margin').attr('width', currWidth - 2 * currMargin);
+        $('#margin').attr('height', currHeight - 2 * currMargin);
         return;
     });
-    $('#margin-unit').change(function(){
-        if($(this).val()=='inch')
-            currMargin=$('#page-margin').val()*currRes;
-        else 
-            currMargin=Math.round($('#page-margin').val()*currRes/2.54);
+    $('#margin-unit').change(function() {
+        if ($(this).val() == 'inch')
+            currMargin = $('#page-margin').val() * currRes;
+        else
+            currMargin = Math.round($('#page-margin').val() * currRes / 2.54);
         $('#margin').attr('x', currMargin);
         $('#margin').attr('y', currMargin);
-        $('#margin').attr('width', currWidth-2*currMargin);
-        $('#margin').attr('height', currHeight-2*currMargin);
+        $('#margin').attr('width', currWidth - 2 * currMargin);
+        $('#margin').attr('height', currHeight - 2 * currMargin);
         return;
     });
 });
 
 resizeTo = function(w, h) {
-    w=Math.round(w); h=Math.round(h);
+    w = Math.round(w);
+    h = Math.round(h);
     $('#svgMain').attr('width', w);
     $('#svgMain').attr('height', h);
     $('#bg').attr('width', w);
     $('#bg').attr('height', h);
-    $('#margin').attr('width', w-2*currMargin);
-    $('#margin').attr('height', h-2*currMargin);
-    return [w,h];
+    $('#margin').attr('width', w - 2 * currMargin);
+    $('#margin').attr('height', h - 2 * currMargin);
+    return [w, h];
 }
-sw= function(res){
+sw = function(res) {
     //300 corr to 5
     //60 corr to 1
-    if(res<150){
+    if (res < 150) {
         return 2.5;
     }
-    if(res<250){
+    if (res < 250) {
         return 4;
     }
-    if(res<400){
+    if (res < 400) {
         return 5;
     }
 
 }
-resetStroke = function(){
-    var temp=cursor.getAttribute('stroke-width');
-    $('path').attr('stroke-width',strokeWidth);
-    $('line').attr('stroke-width',strokeWidth);
-    $('circle').attr('stroke-width',strokeWidth);
-    $('rect').attr('stroke-width',strokeWidth);
-    $('polygon').attr('stroke-width',strokeWidth);
-    $('ellipse').attr('stroke-width',strokeWidth);
-    $('polyline').attr('stroke-width',strokeWidth);
-    cursor.setAttribute('stroke-width',temp);
+resetStroke = function() {
+    var temp = cursor.getAttribute('stroke-width');
+    $('path').attr('stroke-width', strokeWidth);
+    $('line').attr('stroke-width', strokeWidth);
+    $('circle').attr('stroke-width', strokeWidth);
+    $('rect').attr('stroke-width', strokeWidth);
+    $('polygon').attr('stroke-width', strokeWidth);
+    $('ellipse').attr('stroke-width', strokeWidth);
+    $('polyline').attr('stroke-width', strokeWidth);
+    cursor.setAttribute('stroke-width', temp);
 }

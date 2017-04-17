@@ -24,7 +24,7 @@ intersect= function(shape1id,shape2id){
 var shapeTypes={'circle':1, 'rect':0, 'line':2, 'polyline':3, 'ellipse': 4, 'path': 5,'polygon':7};
 constructShapeObj = function(id){
 	var type=shapeTypes[$('#'+id).prop("tagName")];
-	console.log(id, $('#'+id).prop("tagName"), type);
+	
 	if(type==1){
 		return {
 			type: 1,

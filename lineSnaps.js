@@ -31,10 +31,7 @@ lineLineInitSnap = function(activeOSNAPObj, x, y) {
             };
         }
     }
-    return {
-        x: x,
-        y: y
-    };
+    return -1;
 }
 circleLineInitSnap = function(activeOSNAPObj,x,y){
     return lineLineInitSnap(activeOSNAPObj,x,y);
@@ -45,20 +42,18 @@ lineCircleInitSnap = function(activeOSNAPObj, x, y) {
     if(dist2(x,y,cx,cy)<1000) {
         return {x: cx, y:cy};
     }
-    return { x: x, y: y };
+    return -1;
 }
 circleCircleInitSnap = function(activeOSNAPObj,x,y){
     return lineCircleInitSnap(activeOSNAPObj,x,y);
 }
 lineLineEndSnap = function(activeOSNAPObj, x, y, xe, ye) {
     if (autoSnapModes.indexOf('perp') > -1) {
-    	console.log('be perpendicular');
         x1 = $('#' + activeOSNAPObj).attr('x1') / 1;
         y1 = $('#' + activeOSNAPObj).attr('y1') / 1;
         x2 = $('#' + activeOSNAPObj).attr('x2') / 1;
         y2 = $('#' + activeOSNAPObj).attr('y2') / 1;
         t = (Math.PI / 2) - angLines(x, y, xe, ye, x1, y1, x2, y2);
-        console.log(t);
         xe -= x;
         ye -= y;
         return {
@@ -78,10 +73,7 @@ lineLineEndSnap = function(activeOSNAPObj, x, y, xe, ye) {
             y: y + xe * Math.sin(t) + ye * Math.cos(t)
         };
     }
-    return {
-        x: x,
-        y: y
-    };
+    return -1;
 }
 lineCircleEndSnap = function(activeOSNAPObj, xe, ye) {
     var x = $('#' + activeObj).attr('x1');
@@ -92,7 +84,7 @@ lineCircleEndSnap = function(activeOSNAPObj, xe, ye) {
         cy = $('#' + activeOSNAPObj).attr('cy') / 1;
         r = $('#' + activeOSNAPObj).attr('r') / 1;
         if(dist2(x,y,cx,cy)<=r*r){
-            return {x: xe, y:ye};
+            return -1;
         }
         dx = cx - x;
         dy = cy - y;

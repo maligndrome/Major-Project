@@ -1,5 +1,10 @@
 rectEnd = function() {
     actions.push({ type: 'create', objId: activeObj });
+    var x = $('#' + activeObj).attr('x') / 1;
+    var y = $('#' + activeObj).attr('y') / 1;
+    var w = $('#' + activeObj).attr('width') / 1;
+    var h = $('#' + activeObj).attr('height') / 1
+    poI['' + activeObj] = [{ x: x, y: y }, { x: x + w, y: y }, { x: x + w, y: y + h }, { x: x, y: y + h }];
     var sw = $('#' + activeObj).attr('stroke-width') / 1;
     $('#svgMain').append($('#' + activeObj).clone().attr('class', 'aura').attr('id', 'aura' + activeObj).attr('stroke-width', sw + tolerance).attr('stroke-opacity', '0').attr('fill-opacity', '0'));
     document.getElementById('aura' + activeObj).addEventListener('mouseover', function(e) {
@@ -44,6 +49,7 @@ rectEnd = function() {
 }
 circleEnd = function() {
     actions.push({ type: 'create', objId: activeObj });
+    poI['' + activeObj] = [{ x: $('#' + activeObj).attr('cx') / 1, y: $('#' + activeObj).attr('cy') / 1 }];
     var sw = $('#' + activeObj).attr('stroke-width') / 1;
     $('#svgMain').append($('#' + activeObj).clone().attr('class', 'aura').attr('id', 'aura' + activeObj).attr('stroke-width', sw + tolerance).attr('stroke-opacity', '0').attr('fill-opacity', '0'));
     document.getElementById('aura' + activeObj).addEventListener('mouseover', function(e) {
@@ -73,6 +79,9 @@ circleEnd = function() {
 }
 lineEnd = function() {
     actions.push({ type: 'create', objId: activeObj });
+    poI['' + activeObj] = [{ x: $('#' + activeObj).attr('x1') / 1, y: $('#' + activeObj).attr('y1') / 1 },
+        { x: $('#' + activeObj).attr('x2') / 1, y: $('#' + activeObj).attr('y2') / 1 }
+    ];
     var sw = $('#' + activeObj).attr('stroke-width') / 1;
     $('#svgMain').append($('#' + activeObj).clone().attr('class', 'aura').attr('id', 'aura' + activeObj).attr('stroke-width', sw + tolerance).attr('stroke-opacity', '0').attr('fill-opacity', '0'));
     document.getElementById('aura' + activeObj).addEventListener('mouseover', function(e) {
@@ -129,6 +138,7 @@ lineAngleEnd = function() {
 }
 threePtCircleEnd = function() {
     actions.push({ type: 'create', objId: activeObj });
+    poI['' + activeObj] = [{ x: $('#' + activeObj).attr('cx') / 1, y: $('#' + activeObj).attr('cy') / 1 }];
     var sw = $('#' + activeObj).attr('stroke-width') / 1;
     $('#svgMain').append($('#' + activeObj).clone().attr('class', 'aura').attr('id', 'aura' + activeObj).attr('stroke-width', sw + tolerance).attr('stroke-opacity', '0').attr('fill-opacity', '0'));
     document.getElementById('aura' + activeObj).addEventListener('mouseover', function(e) {
@@ -159,6 +169,7 @@ threePtCircleEnd = function() {
 diaCircleEnd = function() {
     actions.push({ type: 'create', objId: activeObj });
     var sw = $('#' + activeObj).attr('stroke-width') / 1;
+    poI['' + activeObj] = [{ x: $('#' + activeObj).attr('cx') / 1, y: $('#' + activeObj).attr('cy') / 1 }];
     $('#svgMain').append($('#' + activeObj).clone().attr('class', 'aura').attr('id', 'aura' + activeObj).attr('stroke-width', sw + tolerance).attr('stroke-opacity', '0').attr('fill-opacity', '0'));
     document.getElementById('aura' + activeObj).addEventListener('mouseover', function(e) {
         autoSnapActive = true;
@@ -191,6 +202,12 @@ polyLineEnd = function() {
         $('#' + activeObj).remove();
         return;
     }
+    var d = $('#' + activeObj).attr('points').split(' ');
+    poI['' + activeObj] = [];
+    for (var i = 0; i < d.length; i++) {
+        let temp = d[i].split(',');
+        poI['' + activeObj].push({ x: temp[0] / 1, y: temp[1] / 1 });
+    }
     var sw = $('#' + activeObj).attr('stroke-width') / 1;
     $('#svgMain').append($('#' + activeObj).clone().attr('class', 'aura').attr('id', 'aura' + activeObj).attr('stroke-width', sw + tolerance).attr('stroke-opacity', '0').attr('fill-opacity', '0'));
     document.getElementById('aura' + activeObj).addEventListener('mouseover', function(e) {
@@ -214,6 +231,12 @@ polyLineEnd = function() {
 polygonEnd = function() {
     drawing = false;
     actions.push({ type: 'create', objId: activeObj });
+    var d = $('#' + activeObj).attr('points').split(' ');
+    poI['' + activeObj] = [];
+    for (var i = 0; i < d.length; i++) {
+        let temp = d[i].split(',');
+        poI['' + activeObj].push({ x: temp[0] / 1, y: temp[1] / 1 });
+    }
     var sw = $('#' + activeObj).attr('stroke-width') / 1;
     $('#svgMain').append($('#' + activeObj).clone().attr('class', 'aura').attr('id', 'aura' + activeObj).attr('stroke-width', sw + tolerance).attr('stroke-opacity', '0').attr('fill-opacity', '0'));
     document.getElementById('aura' + activeObj).addEventListener('mouseover', function(e) {
@@ -316,7 +339,7 @@ arcStartCenEndEnd = function() {
 }
 
 bezierEnd = function() {
-    $('#'+ activeObj).attr('control-points',curveRegister.join(' '));
+    $('#' + activeObj).attr('control-points', curveRegister.join(' '));
     if (curveRegister.length == 4) {
         $('#' + activeObj).attr('d', 'M ' + curveRegister[0] + ' ' + curveRegister[1] + ' L ' + curveRegister[2] + ' ' + curveRegister[3]);
         return;
@@ -353,9 +376,9 @@ bezierEnd = function() {
     });
     return;
 }
-interpolateEnd= function() {
-    $('#'+activeObj).attr('d',curvify(curveRegister));
-    $('#'+activeObj).attr('points',curveRegister.join(' '));
+interpolateEnd = function() {
+    $('#' + activeObj).attr('d', curvify(curveRegister));
+    $('#' + activeObj).attr('points', curveRegister.join(' '));
     curveRegister.length = 0;
     actions.push({ type: 'create', objId: activeObj });
     var sw = $('#' + activeObj).attr('stroke-width') / 1;

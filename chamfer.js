@@ -3,6 +3,7 @@ rectChamferStraight = function(pos, obj, val) {
     var y1 = moveCache.params.y / 1;
     var w = moveCache.params.w / 1;
     var h = moveCache.params.h / 1;
+    var tempVal=val/1;
     val /= 25.4;
     val *= 300;
     if (2 * val >= w) {
@@ -23,7 +24,7 @@ rectChamferStraight = function(pos, obj, val) {
             pts += ' ' + (x1 + val) + ',' + y1;
             var polygon = createPolygon(pts, obj, strokeWidth);
             SVGRoot.appendChild(polygon);
-            $('#' + obj).attr('rect', x1 + ' ' + y1 + ' ' + w + ' ' + h).attr('chamfered', '0');;
+            $('#' + obj).attr('rect', x1 + ' ' + y1 + ' ' + w + ' ' + h).attr('chamfered', '0').attr('chamfer-vals',val);
             polygonEnd();
             return '';
         }
@@ -39,7 +40,7 @@ rectChamferStraight = function(pos, obj, val) {
             pts += ' ' + (x1 + w) + ',' + (y1 + val);
             var polygon = createPolygon(pts, obj, strokeWidth);
             SVGRoot.appendChild(polygon);
-            $('#' + obj).attr('rect', x1 + ' ' + y1 + ' ' + w + ' ' + h).attr('chamfered', '1');;
+            $('#' + obj).attr('rect', x1 + ' ' + y1 + ' ' + w + ' ' + h).attr('chamfered', '1').attr('chamfer-vals',val);
             polygonEnd();
             return '';
         }
@@ -55,7 +56,7 @@ rectChamferStraight = function(pos, obj, val) {
             pts += ' ' + (x1 + w - val) + ',' + (y1 + h);
             var polygon = createPolygon(pts, obj, strokeWidth);
             SVGRoot.appendChild(polygon);
-            $('#' + obj).attr('rect', x1 + ' ' + y1 + ' ' + w + ' ' + h).attr('chamfered', '2');;
+            $('#' + obj).attr('rect', x1 + ' ' + y1 + ' ' + w + ' ' + h).attr('chamfered', '2').attr('chamfer-vals',val);
             polygonEnd();
             return '';
         }
@@ -71,7 +72,7 @@ rectChamferStraight = function(pos, obj, val) {
             pts += ' ' + (x1) + ',' + (y1 + h - val);
             var polygon = createPolygon(pts, obj, strokeWidth);
             SVGRoot.appendChild(polygon);
-            $('#' + obj).attr('rect', x1 + ' ' + y1 + ' ' + w + ' ' + h).attr('chamfered', '3');
+            $('#' + obj).attr('rect', x1 + ' ' + y1 + ' ' + w + ' ' + h).attr('chamfered', '3').attr('chamfer-vals',val);
             polygonEnd();
             return '';
         }
@@ -83,6 +84,7 @@ polygonChamferStraight = function(pos, obj, val) {
     if ($('#' + obj).attr('rect')) {
         var p = $('#' + obj).attr('rect').split(' ');
         var chamfered = $('#' + obj).attr('chamfered').split(',');
+        var chamferVals = $('#' + obj).attr('chamfer-vals').split(',');
         val /= 25.4;
     	val *= 300;
         if (chamfered.length < 4) {
@@ -95,21 +97,31 @@ polygonChamferStraight = function(pos, obj, val) {
                 //top left
                 $('#' + obj).remove();
                 $('#aura' + obj).remove();
-                var points = moveCache.params.points;
-                for (var i = 0; i < points.length; i++) {
-                    if (points[i].x == x1 && points[i].y == y1) {
-                        points.splice(i, 1, { x: x1, y: y1 + val }, { x: x1 + val, y: y1 });
-                        break;
-                    }
+                var temp=0;
+                var tempVal;
+                var pts='';
+                pts+=(x1)+','+(y1+val)+' '+(x1+val)+','+(y1);
+                if((temp=chamfered.indexOf('1'))>-1){
+                    tempVal=chamferVals[temp]/1;
+                    pts+=' '+(x1+w-tempVal)+','+(y1)+' '+(x1+w)+','+(y1+tempVal);
+                } else {
+                    pts+=' '+(x1+w)+','+(y1);
                 }
-                //console.log(points);
-                var pts = '' + points[0].x + ',' + points[0].y;
-                for (i = 1; i < points.length; i++) {
-                    pts += ' ' + points[i].x + ',' + points[i].y;
+                if((temp=chamfered.indexOf('2'))>-1){
+                    tempVal=chamferVals[temp]/1;
+                    pts+=' '+(x1+w)+','+(y1+h-tempVal)+' '+(x1+w-tempVal)+','+(y1+h);
+                } else {
+                    pts+=' '+(x1+w)+','+(y1+h);
+                }
+                if((temp=chamfered.indexOf('3'))>-1){
+                    tempVal=chamferVals[temp]/1;
+                    pts+=' '+(x1+tempVal)+','+(y1+h)+' '+(x1)+','+(y1+h-tempVal);
+                } else {
+                    pts+=' '+(x1)+','+(y1+h);
                 }
                 var polygon = createPolygon(pts, obj, strokeWidth);
                 SVGRoot.appendChild(polygon);
-                $('#' + obj).attr('rect', x1 + ' ' + y1 + ' ' + w + ' ' + h).attr('chamfered', chamfered+',0');;
+                $('#' + obj).attr('rect', x1 + ' ' + y1 + ' ' + w + ' ' + h).attr('chamfered', chamfered.join(',')+',0').attr('chamfer-vals',chamferVals.join(',')+','+val);
                 polygonEnd();
                 return '';
             }
@@ -117,20 +129,31 @@ polygonChamferStraight = function(pos, obj, val) {
                 //top right
                 $('#' + obj).remove();
                 $('#aura' + obj).remove();
-                var points = moveCache.params.points;
-                for (var i = 0; i < points.length; i++) {
-                    if (points[i].x == x1 + w && points[i].y == y1) {
-                        points.splice(i, 1, { x: x1 + w - val, y: y1 }, { x: x1 + w, y: y1 + val });
-                        break;
-                    }
+                var temp=0;
+                var tempVal;
+                var pts='';
+                if((temp=chamfered.indexOf('0'))>-1){
+                    tempVal=chamferVals[temp]/1;
+                    pts+=(x1)+','+(y1+tempVal)+' '+(x1+tempVal)+','+(y1);
+                } else {
+                    pts+=(x1)+','+(y1);
                 }
-                var pts = '' + points[0].x + ',' + points[0].y;
-                for (i = 1; i < points.length; i++) {
-                    pts += ' ' + points[i].x + ',' + points[i].y;
+                pts+=' '+(x1+w-val)+','+(y1)+' '+(x1+w)+','+(y1+val);
+                if((temp=chamfered.indexOf('2'))>-1){
+                    tempVal=chamferVals[temp]/1;
+                    pts+=' '+(x1+w)+','+(y1+h-tempVal)+' '+(x1+w-tempVal)+','+(y1+h);
+                } else {
+                    pts+=' '+(x1+w)+','+(y1+h);
+                }
+                if((temp=chamfered.indexOf('3'))>-1){
+                    tempVal=chamferVals[temp]/1;
+                    pts+=' '+(x1+tempVal)+','+(y1+h)+' '+(x1)+','+(y1+h-tempVal);
+                } else {
+                    pts+=' '+(x1)+','+(y1+h);
                 }
                 var polygon = createPolygon(pts, obj, strokeWidth);
                 SVGRoot.appendChild(polygon);
-                $('#' + obj).attr('rect', x1 + ' ' + y1 + ' ' + w + ' ' + h).attr('chamfered',chamfered+ ',1');;
+                $('#' + obj).attr('rect', x1 + ' ' + y1 + ' ' + w + ' ' + h).attr('chamfered',chamfered.join(',')+ ',1').attr('chamfer-vals',chamferVals.join(',')+','+val);
                 polygonEnd();
                 return '';
             }
@@ -138,20 +161,31 @@ polygonChamferStraight = function(pos, obj, val) {
                 //bottom right
                 $('#' + obj).remove();
                 $('#aura' + obj).remove();
-                var points = moveCache.params.points;
-                for (var i = 0; i < points.length; i++) {
-                    if (points[i].x == x1 + w && points[i].y == y1 + h) {
-                        points.splice(i, 1, { x: x1 + w, y: y1 + h - val }, { x: x1 + w - val, y: y1 + h });
-                        break;
-                    }
+                var temp=0;
+                var tempVal;
+                var pts='';
+                if((temp=chamfered.indexOf('0'))>-1){
+                    tempVal=chamferVals[temp]/1;
+                    pts+=(x1)+','+(y1+tempVal)+' '+(x1+tempVal)+','+(y1);
+                } else {
+                    pts+=(x1)+','+(y1);
                 }
-                var pts = '' + points[0].x + ' ' + points[0].y;
-                for (i = 1; i < points.length; i++) {
-                    pts += ' ' + points[i].x + ',' + points[i].y;
+                if((temp=chamfered.indexOf('1'))>-1){
+                    tempVal=chamferVals[temp]/1;
+                    pts+=' '+(x1+w-tempVal)+','+(y1)+' '+(x1+w)+','+(y1+tempVal);
+                } else {
+                    pts+=' '+(x1+w)+','+(y1);
+                }
+                pts+=' '+(x1+w)+','+(y1+h-val)+' '+(x1+w-val)+','+(y1+h);
+                if((temp=chamfered.indexOf('3'))>-1){
+                    tempVal=chamferVals[temp]/1;
+                    pts+=' '+(x1+tempVal)+','+(y1+h)+' '+(x1)+','+(y1+h-tempVal);
+                } else {
+                    pts+=' '+(x1)+','+(y1+h);
                 }
                 var polygon = createPolygon(pts, obj, strokeWidth);
                 SVGRoot.appendChild(polygon);
-                $('#' + obj).attr('rect', x1 + ' ' + y1 + ' ' + w + ' ' + h).attr('chamfered',chamfered+ ',2');;
+                $('#' + obj).attr('rect', x1 + ' ' + y1 + ' ' + w + ' ' + h).attr('chamfered',chamfered.join(',')+ ',2').attr('chamfer-vals',chamferVals.join(',')+','+val);
                 polygonEnd();
                 return '';
             }
@@ -159,23 +193,34 @@ polygonChamferStraight = function(pos, obj, val) {
                 //bottom left
                 $('#' + obj).remove();
                 $('#aura' + obj).remove();
-                var points = moveCache.params.points;
-                for (var i = 0; i < points.length; i++) {
-                    if (points[i].x == x1 && points[i].y == y1 + h) {
-                        points.splice(i, 1, { x: x1 + val, y: y1 + h }, { x: x1, y: y1 + h - val });
-                        break;
-                    }
+                var temp=0;
+                var tempVal;
+                var pts='';
+                if((temp=chamfered.indexOf('0'))>-1){
+                    tempVal=chamferVals[temp]/1;
+                    pts+=(x1)+','+(y1+tempVal)+' '+(x1+tempVal)+','+(y1);
+                } else {
+                    pts+=(x1)+','+(y1);
                 }
-                var pts = '' + points[0].x + ' ' + points[0].y;
-                for (i = 1; i < points.length; i++) {
-                    pts += ' ' + points[i].x + ',' + points[i].y;
+                if((temp=chamfered.indexOf('1'))>-1){
+                    tempVal=chamferVals[temp]/1;
+                    pts+=' '+(x1+w-tempVal)+','+(y1)+' '+(x1+w)+','+(y1+tempVal);
+                } else {
+                    pts+=' '+(x1+w)+','+(y1);
                 }
+                if((temp=chamfered.indexOf('2'))>-1){
+                    tempVal=chamferVals[temp]/1;
+                    pts+=' '+(x1+w)+','+(y1+h-tempVal)+' '+(x1+w-tempVal)+','+(y1+h);
+                } else {
+                    pts+=' '+(x1+w)+','+(y1+h);
+                }
+                pts+=' '+(x1+val)+','+(y1+h)+' '+(x1)+','+(y1+h-val);
                 var polygon = createPolygon(pts, obj, strokeWidth);
                 SVGRoot.appendChild(polygon);
-                $('#' + obj).attr('rect', x1 + ' ' + y1 + ' ' + w + ' ' + h).attr('chamfered',chamfered+ ',3');
+                $('#' + obj).attr('rect', x1 + ' ' + y1 + ' ' + w + ' ' + h).attr('chamfered',chamfered.join(',')+ ',3').attr('chamfer-vals',chamferVals.join(',')+','+val);
                 polygonEnd();
                 return '';
             }
         }
     }
-}
+};

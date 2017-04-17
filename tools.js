@@ -44,10 +44,11 @@ threePtCircle = function() {
     return;
 }
 diaCircle = function() {
+    var cursor2={x:cursor.x,y:cursor.y};
     path = '';
-    path += 'M' + diaCircleRegister[0] + ' ' + diaCircleRegister[1] + ' L' + cursor.x + ' ' + cursor.y;
+    path += 'M' + diaCircleRegister[0] + ' ' + diaCircleRegister[1] + ' L' + cursor2.x + ' ' + cursor2.y;
     $('#temp').attr('d', path);
-    hkr = diaCircleParams([diaCircleRegister[0], diaCircleRegister[1], cursor.x, cursor.y]);
+    hkr = diaCircleParams([diaCircleRegister[0], diaCircleRegister[1], cursor2.x, cursor2.y]);
     $('#temp2').attr('cx', hkr[0]);
     $('#temp2').attr('cy', hkr[1]);
     $('#temp2').attr('r', hkr[2]);
@@ -157,6 +158,12 @@ arc3pt = function() {
         hkr = circleParams([threePtRegister[0], threePtRegister[1], threePtRegister[2], threePtRegister[3], cursor2.x, cursor2.y]);
         var d = describeArc(hkr[0], hkr[1], hkr[2], getThetaPtCircle(hkr[0], hkr[1], threePtRegister[0], threePtRegister[1]), getThetaPtCircle(hkr[0], hkr[1], cursor2.x, cursor2.y));
         $('#temp2').attr('d', d);
+        if (checkPtOnPath('temp2', { x: threePtRegister[2], y: threePtRegister[3] })[0] == false) {
+            var temp = [cursor2.x,cursor2.y, threePtRegister[2], threePtRegister[3], threePtRegister[0], threePtRegister[1]];
+            hkr = circleParams(temp);
+            var d = describeArc(hkr[0], hkr[1], hkr[2], getThetaPtCircle(hkr[0], hkr[1], temp[0], temp[1]), getThetaPtCircle(hkr[0], hkr[1], temp[4], temp[5]));
+            $('#temp2').attr('d', d);
+        }
     }
     return;
 }
@@ -199,7 +206,7 @@ arcStartCenEnd = function() {
 
 bezier = function() {
     if (ongoing) {
-        $('#temp2').attr('x2',mousePos.x).attr('y2', mousePos.y);
+        $('#temp2').attr('x2', mousePos.x).attr('y2', mousePos.y);
         if (curveRegister.length == 2) {
             $('#' + activeObj).attr('d', 'M ' + curveRegister[0] + ' ' + curveRegister[1] + ' L ' + mousePos.x + ' ' + mousePos.y);
             return;
@@ -220,10 +227,10 @@ bezier = function() {
     }
     return;
 }
-interpolate = function(){
+interpolate = function() {
     if (ongoing) {
         var temp = curveRegister.slice();
-        temp.push(mousePos.x/1,mousePos.y/1);
+        temp.push(mousePos.x / 1, mousePos.y / 1);
         $('#temp').attr('d', curvify(temp));
     }
 }

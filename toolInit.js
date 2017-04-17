@@ -532,6 +532,15 @@ arc3ptInit = function(pos) {
             hkr = circleParams(threePtRegister);
             var d = describeArc(hkr[0], hkr[1], hkr[2], getThetaPtCircle(hkr[0], hkr[1], threePtRegister[0], threePtRegister[1]), getThetaPtCircle(hkr[0], hkr[1], threePtRegister[4], threePtRegister[5]));
             $('#' + activeObj).attr('d', d);
+            if (checkPtOnPath(activeObj,{x:threePtRegister[2],y:threePtRegister[3]})[0]==false){
+                var temp=[threePtRegister[4],threePtRegister[5],threePtRegister[2],threePtRegister[3],threePtRegister[0],threePtRegister[1]];
+                poI[''+activeObj]=[{x:temp[0],y:temp[1]},{x:temp[4],y:temp[5]}];
+                hkr = circleParams(temp);
+                var d = describeArc(hkr[0], hkr[1], hkr[2], getThetaPtCircle(hkr[0], hkr[1], temp[0], temp[1]), getThetaPtCircle(hkr[0], hkr[1], temp[4], temp[5]));
+                $('#' + activeObj).attr('d', d);
+            } else {
+                poI[''+activeObj]=[{x:threePtRegister[0],y:threePtRegister[1]},{x:threePtRegister[4],y:threePtRegister[5]}];
+            }
             for (var i = 0; i < 6; i++) {
                 threePtRegister.pop();
             }
@@ -579,6 +588,7 @@ arcStartCenEndInit = function() {
             }
             var d = describeArc(threePtRegister[2], threePtRegister[3], r, getThetaPtCircle(threePtRegister[2], threePtRegister[3], threePtRegister[0], threePtRegister[1]), getThetaPtCircle(threePtRegister[2], threePtRegister[3], endPt.x, endPt.y));
             $('#' + activeObj).attr('d', d);
+            poI[''+activeObj]=[{x:threePtRegister[0],y:threePtRegister[1]},{x:endPt.x,y:endPt.y}];
             for (var i = 0; i < 6; i++) {
                 threePtRegister.pop();
             }

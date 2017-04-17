@@ -165,32 +165,40 @@ endTool = function() {
     trimming = false;
     editing = true;
     selectOn = true;
+    chamfer=false;
+    hatchOn=false;
+    centermark=false;
+    centerline=false;
+    trimming=false;
     return;
 }
 lastPos = mousePos;
 activeObjEdit = '', activeObjEditId = '';
 chamfer = false;
 chamferObj = '';
+poI = {};
+poIcreated=false;
+poI2created=false;
 SVGRoot.addEventListener("mousedown", function(e) {
     if (e.button == 0) {
         $('#rightClkMenu').hide();
         if (chamfer) {
+            chamfer = false;
             chamferObj = pickObj(e);
-            console.log('current',chamferObj);
             var chamferPos = {
-                        x: cursor.getAttribute('cx') / 1,
-                        y: cursor.getAttribute('cy') / 1
-                    };
+                x: cursor.getAttribute('cx') / 1,
+                y: cursor.getAttribute('cy') / 1
+            };
             if ($('#' + chamferObj).prop('tagName') == 'rect') {
                 $('#input-label').html('Enter chamfer length: x');
                 $('#input-text').off('change');
                 $('#input-text').on('change', function() {
                     var value = $('#input-text').val().split(' ');
-                    var a='';
-                    if (value[0]=='S'){
-                        a=rectChamferStraight(chamferPos,chamferObj,value[1]/1);
-                    } else if (value[0] == 'R'){
-                        a=rectChamferRound(chamferPos,chamferObj,value[1]/1);
+                    var a = '';
+                    if (value[0] == 'S') {
+                        a = rectChamferStraight(chamferPos, chamferObj, value[1] / 1);
+                    } else if (value[0] == 'R') {
+                        a = rectChamferRound(chamferPos, chamferObj, value[1] / 1);
                     } else {
                         $('#input-text').val('');
                         $('#input-text').attr('placeholder', 'INVALID INPUT');
@@ -208,11 +216,11 @@ SVGRoot.addEventListener("mousedown", function(e) {
                 $('#input-text').off('change');
                 $('#input-text').on('change', function() {
                     var value = $('#input-text').val().split(' ');
-                    var a='';
-                    if (value[0]=='S'){
-                        a=polygonChamferStraight(chamferPos,chamferObj,value[1]/1);
-                    } else if (value[0] == 'R'){
-                        a=polygonChamferRound(chamferPos,chamferObj,value[1]/1);
+                    var a = '';
+                    if (value[0] == 'S') {
+                        a = polygonChamferStraight(chamferPos, chamferObj, value[1] / 1);
+                    } else if (value[0] == 'R') {
+                        a = polygonChamferRound(chamferPos, chamferObj, value[1] / 1);
                     } else {
                         $('#input-text').val('');
                         $('#input-text').attr('placeholder', 'INVALID INPUT');
@@ -275,6 +283,7 @@ SVGRoot.addEventListener("mousedown", function(e) {
                 var rect = createRect(select1.x, select1.y, 1, 1, 'select', 1, selectStrokeHue, selectFillHue, selectFillOpacity);
                 rect.setAttribute('stroke-dasharray', '5,5');
                 SVGRoot.appendChild(rect);
+                return;
             }
         }
         if (editing === false) {
@@ -284,6 +293,7 @@ SVGRoot.addEventListener("mousedown", function(e) {
                 y: cursor.getAttribute('cy') / 1
             };
             toolInit[tool]();
+            return;
         } else {
             if (dimensioning == true) {
                 if (setDimension == false) {
@@ -292,12 +302,15 @@ SVGRoot.addEventListener("mousedown", function(e) {
                         y: cursor.getAttribute('cy') / 1
                     };
                     dimension(e.target, dimMode[dimActive], lastPos);
+                    return;
                 } else {
-                    console.log("im supposed to be here");
                     dimEnd();
                     setDimension = false;
                     dimensioning = false;
-                    editing = false;
+                    editing = true;
+                    selectOn = true;
+                    selecting = false;
+                    return;
                 }
             } else if (hatchOn == true) {
                 var hatchPos = {
@@ -306,6 +319,7 @@ SVGRoot.addEventListener("mousedown", function(e) {
                 };
                 $('#svgMain').css('cursor', 'wait');
                 setTimeout(function() { hatchArbitrary(hatchPos, p1) }, 0);
+                return;
             } else if (selectOn == true && e.shiftKey == false) {
                 select1.x = cursor.getAttribute('cx') / 1;
                 select1.y = cursor.getAttribute('cy') / 1;
@@ -313,17 +327,25 @@ SVGRoot.addEventListener("mousedown", function(e) {
                 rect.setAttribute('stroke-dasharray', '5,5');
                 SVGRoot.appendChild(rect);
                 selecting = true;
+                return;
             } else if (selectOn == true && e.shiftKey == true) {
                 moveObj = pickObj(e);
                 if (moveObj != '') {
                     moving = true;
                     $('#svgMain').css('cursor', 'move');
                 }
+                return;
             }
         }
     }
 }, false);
 document.body.addEventListener("keyup", function(e) {
+    if(e.which == 16){
+        $('#poI').remove();
+        $('#poI2').remove();
+        poIcreated=false;
+        poI2created=false;
+    }
     if (selectOn == true && selected.length > 0 && e.which == 46) {
         removeObjs();
         return;
@@ -391,6 +413,7 @@ SVGRoot.addEventListener("mouseup", function(e) {
             select2.y = cursor.getAttribute('cy') / 1;
             scaleSelect(select1, select2);
             $('#select').remove();
+            return;
         }
     }
     if (editing == false) {
@@ -398,6 +421,7 @@ SVGRoot.addEventListener("mouseup", function(e) {
             if (drawing == true) {
                 drawing = false;
                 toolEnd[tool]();
+                return;
             };
         }
     } else {
@@ -405,6 +429,7 @@ SVGRoot.addEventListener("mouseup", function(e) {
             $('#svgMain').css('cursor', 'default');
             moving = false;
             moveObj = '';
+            return;
         }
         if (selectOn == true && e.shiftKey == false) {
             unselectObjs();
@@ -412,6 +437,8 @@ SVGRoot.addEventListener("mouseup", function(e) {
             select2.y = cursor.getAttribute('cy') / 1;
             selected = selectObjs();
             $('#select').remove();
+            selecting = false;
+            return;
         }
     }
     // if(register){
@@ -421,31 +448,47 @@ SVGRoot.addEventListener("mouseup", function(e) {
 }, false);
 SVGRoot.addEventListener("mousemove", function(e) {
     mousePos = getMousePos(SVGRoot, e);
-    if (autoSnapActive == true && autoSnapOn == true) {
-        // if (osnapOn == true && osnapUsage == true) {
-        //     pos = svgSnapPos(mousePos.x, mousePos.y, osnapMode);
-        //     cursor.setAttribute('cx', pos.x);
-        //     cursor.setAttribute('cy', pos.y);
-        //     $('#coord-input').show();
-        //     $('#coordX').html((cursor.x*0.03937/currRes).toFixed(leastCount));
-        //     $('#coordY').html((cursor.y*0.03937/currRes).toFixed(leastCount));
-        //     $('#coord-input').css({
-        //         top: e.clientY - 5 - 20,
-        //         left: e.clientX + 5
-        //     });
-        // } else {
-        pos = showSnapPos(mousePos.x, mousePos.y);
-        cursor.setAttribute('cx', pos.x);
-        cursor.setAttribute('cy', pos.y);
-        $('#coord-input').show();
-        $('#coordX').html((cursor.x * 25.4 / currRes).toFixed(leastCount));
-        $('#coordY').html((cursor.y * 25.4 / currRes).toFixed(leastCount));
-        $('#coord-input').css({
-            top: e.clientY - 5 - 20,
-            left: e.clientX + 5
-        });
-
-        //}
+    if (editing == false && (autoSnapOn==true || e.shiftKey ==true)) {
+        if (autoSnapActive == true ) {
+            // if (osnapOn == true && osnapUsage == true) {
+            //     pos = svgSnapPos(mousePos.x, mousePos.y, osnapMode);
+            //     cursor.setAttribute('cx', pos.x);
+            //     cursor.setAttribute('cy', pos.y);
+            //     $('#coord-input').show();
+            //     $('#coordX').html((cursor.x*0.03937/currRes).toFixed(leastCount));
+            //     $('#coordY').html((cursor.y*0.03937/currRes).toFixed(leastCount));
+            //     $('#coord-input').css({
+            //         top: e.clientY - 5 - 20,
+            //         left: e.clientX + 5
+            //     });
+            // } else {
+            pos = showSnapPos(mousePos.x, mousePos.y);
+            if (pos == -1) {
+                pos = showAdvSnapPos(mousePos.x, mousePos.y);
+            }
+            cursor.setAttribute('cx', pos.x);
+            cursor.setAttribute('cy', pos.y);
+            $('#coord-input').show();
+            $('#coordX').html((cursor.x * 25.4 / currRes).toFixed(leastCount));
+            $('#coordY').html((cursor.y * 25.4 / currRes).toFixed(leastCount));
+            $('#coord-input').css({
+                top: e.clientY - 5 - 20,
+                left: e.clientX + 5
+            });
+            //}
+        } else {
+            //advancedSnapping!!!!!!!!!!!!!
+            pos = showAdvSnapPos(mousePos.x, mousePos.y);
+            cursor.setAttribute('cx', pos.x);
+            cursor.setAttribute('cy', pos.y);
+            $('#coord-input').show();
+            $('#coordX').html((cursor.x * 25.4 / currRes).toFixed(leastCount));
+            $('#coordY').html((cursor.y * 25.4 / currRes).toFixed(leastCount));
+            $('#coord-input').css({
+                top: e.clientY - 5 - 20,
+                left: e.clientX + 5
+            });
+        }
     } else {
         cursor.setAttribute('cx', mousePos.x);
         cursor.setAttribute('cy', mousePos.y);
@@ -544,7 +587,7 @@ showSnapPos = function(x, y) {
             } else if (a == 'circle') {
                 return lineCircleInitSnap(activeOSNAPObj, x, y);
             } else {
-                return { x: x, y: y };
+                return -1;
             }
         } else {
             xe = cursor.getAttribute('cx');
@@ -554,7 +597,7 @@ showSnapPos = function(x, y) {
             } else if (a == 'circle') {
                 return lineCircleEndSnap(activeOSNAPObj, x, y);
             } else {
-                return { x: x, y: y };
+                return -1;
             }
         }
     } else if (tool == 1) {
@@ -565,15 +608,12 @@ showSnapPos = function(x, y) {
             } else if (a == 'circle') {
                 return circleCircleInitSnap(activeOSNAPObj, x, y);
             } else {
-                return { x: x, y: y };
+                return -1;
             }
         } else {
-            return { x: x, y: y };
+            return -1;
         }
     } else {
-        return {
-            x: x,
-            y: y
-        };
+        return -1;
     }
 };
